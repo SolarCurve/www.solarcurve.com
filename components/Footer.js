@@ -67,7 +67,7 @@ const ThemeSwitcher = () => {
         aria-label="Use Light Mode"
         onClick={() => {
           document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
+          localStorage.setItem('theme', 'dark');
         }}
         className="flex items-center h-full pr-2 bg-primary dark:bg-transparent rounded-3xl flex justify-center align-center p-2 w-24 h-10 transition"
       >
