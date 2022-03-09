@@ -11,7 +11,6 @@ export default function Header({ name }) {
           <a>{name}</a>
         </Link>
       </p>
-<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KB13YN06XE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
