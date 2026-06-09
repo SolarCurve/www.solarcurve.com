@@ -21,6 +21,8 @@ This is the most important step. AHCI (Advanced Host Controller Interface) is de
 
 The fix: in the registry at `HKLM\SYSTEM\CurrentControlSet\Services\msahci`, set `Start` to `0`. If you have an Intel chip, do the same for `iaStorV`. Reboot into BIOS and switch to AHCI mode, then let Windows reinstall the driver on first boot.
 
+![AHCI registry setting — set Start to 0](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8pbixSt5y-1XDfEoBSYXkkDe6S8AjminwCGomzCUhw0leL1rC7tnsETfuFbN2YdUfew1pTkoj03EU8pRAidgkiw9H1VMEFNmNDK-Luhw_z3j7txD_psPCEN853APBL6wJ2rZX-x5ZSSs/s1600/pic1.png)
+
 ## Step 2: Enable TRIM
 
 TRIM is a command set created specifically for SSDs that handles deletions and garbage collection differently from spinning drives. SSDs have a finite number of writes — TRIM extends their life and maintains performance. On Windows 7 with a modern drive it's usually auto-enabled, but verify:
@@ -39,13 +41,25 @@ fsutil behavior set DisableDeleteNotify 0
 
 I ran three benchmark configs with [CrystalDiskMark](https://crystalmark.info/en/software/crystaldiskmark/):
 
-1. **SATA 3 via Marvell controller card (PCI-e 1x)** — topped out, couldn't break through the ceiling
-2. **SATA 3, green cable vs red cable** — nearly identical. The "SATA 3 cable" marketing is a gimmick.
-3. **Onboard SATA 2 controller** — faster than the SATA 3 card
+**Test 1: SATA 3 via Marvell controller card (PCI-e 1x)**
+
+![Test 1 — SATA 3 Marvell controller, green cable](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhVpRNtGwJavk6cp6IGCRAZEXNCuG9Ud21ne_37az15inO6FmB_56Jth9w1VpwuymM6mDGdMXxEwgyNSy7NW8dkrZANRkwba9nvF_Cifrwm7tXKOenbbDbhdDe3b04Kj-eiuFdSNuqvjxo/s1600/pic2.png)
+
+**Test 2: SATA 3, red cable vs green cable**
+
+![Test 2 — SATA 3 red cable (nearly identical)](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhOaDg1ysRu2wSx_spneFHdQhIWhKkz3dEgwZDq6jJcC-G40OPnvrE7whO2yxu3BulrbYznuNQkKm0Jjq23yqv3CzvjJkKnRL5WJPY-HH8IuuDsvBheF21P537KEYK_w5W-MmJYD2GA96g/s1600/pic3.png)
+
+**Test 3: Onboard SATA 2 controller**
+
+![Test 3 — Onboard SATA 2, faster than the SATA 3 card](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjn1EdgDfUXrhJbdnO1VsIKRNuq-TbnqeIgFKC6uZABGTWRSw-iaZUBQyvXM1FilmN856-WQ6MbT63K2kO4H2lTqWekQp2fDU5Al3qEW1jPo064p1GJSDKaBt6oOh6jfrOG6Sw_VwrY0tA/s1600/pic4.png)
 
 That third result was the revelation. A SATA 2 controller was outperforming a SATA 3 card. Why?
 
 The PCI Express 1x slot that the controller card was in only has the bandwidth of PCI-e 1.0 × 1. That's roughly 250 MB/s theoretical, which the SATA 3 drive immediately saturates. The onboard SATA 2 controller had a direct path to the chipset with more effective bandwidth, so it actually got better real-world throughput.
+
+![Final WEI result — 7.8 out of 7.9](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPahXO1yMyL6x3VSdWS8cROc-blu1jZLBeBgZZVaMcWW4VHi3lV0-WXLwUS-Uu8k4BfWvWEkFJZ6xwe3yGLSN0q20CcYPJb6ieaLQBoY-jqnwVcw8jtUpFJbgIREf50kpq48x0jwM6GDs/s1600/pic5.png)
+
+![CrystalDiskMark final benchmark](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgVnzCaPPeAsUj9fU9zHc-3g4jERUmOKBPdZ1Xwi-zh7cG1OEbxxJL_kbIH8SLIVFFoSd00nyJxfi1gFj7StnJ8LfFMTTkC1pSPEYGTzWDQJVRYdczx1RD9puwfykfsHGxIkFUNXDOzt5M/s1600/pic6.png)
 
 **WEI disk score result: 5.9 → 7.8 out of 7.9.**
 
