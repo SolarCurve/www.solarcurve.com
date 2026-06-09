@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import PostCard from '../components/PostCard.astro';
+import Footer from '../components/Footer.astro';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts.sort(
+  (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
+);
+
+const categories = ['all', 'solar', 'gaming', 'crypto', 'tech'] as const;
+---
+
+<BaseLayout title="Blog" description="All posts from SolarCurve's House of Flamp.">
+  <Nav />
+
+  <main class="px-6 md:px-10 py-10 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-medium text-star mb-1">All posts</h1>
+    <p class="text-sm text-dim mb-8">{posts.length} posts · 2009 – present</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {posts.map(post => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

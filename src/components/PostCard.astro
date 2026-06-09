@@ -1,0 +1,33 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  date: string;
+  category: 'solar' | 'gaming' | 'crypto' | 'tech';
+  slug: string;
+}
+
+const { title, description, date, category, slug } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  solar:  'Solar journey',
+  gaming: 'Gaming',
+  crypto: 'Crypto',
+  tech:   'Tech',
+};
+---
+
+<a href={`/posts/${slug}`} class="post-card block group">
+  <div class="flex items-center gap-2 mb-2.5">
+    <span class={`category-pill category-${category}`}>
+      {categoryLabels[category]}
+    </span>
+    <span class="text-[11px] text-muted">{date}</span>
+  </div>
+  <h3 class="text-sm font-medium text-star leading-snug mb-1.5 group-hover:text-solar-300 transition-colors">
+    {title}
+  </h3>
+  {description && (
+    <p class="text-[12px] text-dim leading-relaxed m-0 line-clamp-2">{description}</p>
+  )}
+</a>

@@ -1,0 +1,56 @@
+---
+title: "SSD benchmarking, testing, and tuning"
+description: "Chasing a WEI disk score from 5.9 to 7.8 with a Corsair Force 3 GT, AHCI mode, TRIM, and a lesson about PCI Express bandwidth limits."
+date: "October 21, 2011"
+dateSort: "2011-10-21"
+category: tech
+tags: [ssd, hardware, windows, benchmarking, storage]
+---
+
+To many people I'm just a nerd, and most of them don't know what an SSD drive is or why they're taking over. In short, Solid State Drives are a much faster technology with no moving parts — used in iPods, smartphones, tablets, and increasingly desktop PCs. They're more expensive and smaller, but the speed difference is real.
+
+My goal: take my Windows Experience Index (WEI) disk score from **5.9 to as high as possible**.
+
+**New drive:** [Corsair Force 3 GT 120GB SATA 3](http://www.corsair.com/ssd/force-series-gt-ssd/force-series-gt-120gb-sata-3-6gbps-solid-state-hard-drive.html)
+
+Why this drive: best performance-per-dollar on NewEgg, a "Fastest/Best Performance" award, and honestly — it's red, and it matched my red Corsair Dominator memory. I'm a builder. These things matter.
+
+## Step 1: Enable AHCI mode
+
+This is the most important step. AHCI (Advanced Host Controller Interface) is designed for faster storage and gets past limitations of the legacy IDE interface. Do this *before* installing Windows on the new drive — if you try to enable it after the fact, you'll blue screen.
+
+The fix: in the registry at `HKLM\SYSTEM\CurrentControlSet\Services\msahci`, set `Start` to `0`. If you have an Intel chip, do the same for `iaStorV`. Reboot into BIOS and switch to AHCI mode, then let Windows reinstall the driver on first boot.
+
+## Step 2: Enable TRIM
+
+TRIM is a command set created specifically for SSDs that handles deletions and garbage collection differently from spinning drives. SSDs have a finite number of writes — TRIM extends their life and maintains performance. On Windows 7 with a modern drive it's usually auto-enabled, but verify:
+
+```cmd
+fsutil behavior query DisableDeleteNotify
+```
+
+`DisableDeleteNotify = 0` means TRIM is on. If it shows `1`, enable it:
+
+```cmd
+fsutil behavior set DisableDeleteNotify 0
+```
+
+## Three tests, one lesson
+
+I ran three benchmark configs with [CrystalDiskMark](https://crystalmark.info/en/software/crystaldiskmark/):
+
+1. **SATA 3 via Marvell controller card (PCI-e 1x)** — topped out, couldn't break through the ceiling
+2. **SATA 3, green cable vs red cable** — nearly identical. The "SATA 3 cable" marketing is a gimmick.
+3. **Onboard SATA 2 controller** — faster than the SATA 3 card
+
+That third result was the revelation. A SATA 2 controller was outperforming a SATA 3 card. Why?
+
+The PCI Express 1x slot that the controller card was in only has the bandwidth of PCI-e 1.0 × 1. That's roughly 250 MB/s theoretical, which the SATA 3 drive immediately saturates. The onboard SATA 2 controller had a direct path to the chipset with more effective bandwidth, so it actually got better real-world throughput.
+
+**WEI disk score result: 5.9 → 7.8 out of 7.9.**
+
+Not quite 7.9, but the ceiling was the PCI-e slot bandwidth, not the drive. To squeeze out the last 0.1, I'd need a SATA 3 controller on a PCI-e 4x or 8x slot, or a newer motherboard with native SATA 3 onboard. Given that I'm an "upgrade every 3 years" kind of person, I'm happy to sit at 7.8 and wait.
+
+---
+
+**Bonus discovery**: I had an eSATA controller card in my second PCI-e slot that was silently running one of my video cards at 8x instead of 16x. Moved it to the 1x slot I vacated and got both video cards back to full speed. Always worth auditing what's in your expansion slots.

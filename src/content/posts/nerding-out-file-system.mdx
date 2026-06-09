@@ -1,0 +1,78 @@
+---
+title: "Nerding out: XFS file system repair"
+description: "Backup software hanging, a device showing busy when it isn't, and the right sequence of commands to actually fix an XFS filesystem."
+date: "January 25, 2012"
+dateSort: "2012-01-25"
+category: tech
+tags: [linux, xfs, sysadmin, filesystem, devops]
+---
+
+I've been chasing down an issue where my backup software ([Vembu Storegrid](http://www.vembu.com/)) would hang and become unresponsive. Their support team logged in and helped me figure out that part of the disk becomes unresponsive in high I/O situations like when doing backups. They suggested running a repair.
+
+The tricky part is that unmounting the drive and running `xfs_repair` wasn't as straightforward as it should be. Here's what actually worked.
+
+## Step 1: Check the device name
+
+```bash
+df -h
+```
+
+Output showed `/dev/sdb1` mounted at `/data` — the 2.8T drive in question.
+
+## Step 2: The "device is busy" problem
+
+```bash
+umount /data
+# umount: /data: device is busy
+
+umount -f /data
+# umount2: Device or resource busy
+
+umount -l /data  # "lazy" unmount — detaches at next idle moment
+```
+
+The lazy unmount got it out of the `df` listing, but `xfs_repair` still complained:
+
+```bash
+xfs_repair /dev/sdb1
+# xfs_repair: /dev/sdb1 contains a mounted filesystem
+# fatal error -- couldn't initialize XFS library
+```
+
+## Step 3: Find what's holding the device
+
+The drive was technically unmounted but something still had open file handles. Mount it back up and use `fuser`:
+
+```bash
+mount /data
+fuser -vm /dev/sdb1
+```
+
+Output:
+
+```
+USER     PID  ACCESS  COMMAND
+/dev/sdb1: root  4567  f....  nautilus
+            root  4590  f....  trashapplet
+            root  4890  ..c..  bash
+```
+
+Kill those processes:
+
+```bash
+kill 4567 4590 4890
+fuser -vm /dev/sdb1  # now returns nothing
+```
+
+## Step 4: Unmount and repair
+
+```bash
+umount /data
+xfs_repair /dev/sdb1
+```
+
+This time it ran successfully through all phases. Problem solved.
+
+---
+
+After Googling around I didn't find anyone who had clearly laid out the full sequence for these errors — especially the `fuser` step that everyone seems to skip. Putting this out there hoping it saves someone else the time.

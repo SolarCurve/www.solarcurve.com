@@ -1,0 +1,23 @@
+---
+// TauWidget.astro — TAU esports legacy
+---
+
+<div class="widget-card h-full flex flex-col">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-tau-400 text-[15px]">🏆</span>
+    <span class="text-[11px] text-muted font-medium tracking-widest uppercase">TAU legacy</span>
+  </div>
+
+  <p class="text-[12px] text-bright leading-relaxed mb-3 flex-1">
+    CAL-Invite · CPL LAN competitor · gaming cafe founder ·
+    DFW esports infrastructure 2000–2005
+  </p>
+
+  <div class="flex flex-wrap gap-1.5">
+    {['Texas Area Untouchables', 'CPL', 'TGC Cafes', 'Natural Selection'].map(tag => (
+      <span class="bg-tau-900 border border-tau-border rounded-full px-2 py-0.5 text-[10px] text-tau-400">
+        {tag}
+      </span>
+    ))}
+  </div>
+</div>

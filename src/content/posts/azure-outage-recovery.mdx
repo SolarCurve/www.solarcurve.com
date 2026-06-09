@@ -1,0 +1,36 @@
+---
+title: "Azure outage recovery"
+description: "VMs stuck in 'starting' state and the portal won't help. Here's how to force-stop them via PowerShell before you lose your mind."
+date: "March 31, 2014"
+dateSort: "2014-03-31"
+category: tech
+tags: [azure, powershell, devops, microsoft, sysadmin]
+---
+
+We use Microsoft Azure for our Integration and UAT environments for a variety of reasons. We've recently become struck with the issue of updates to the host servers resulting in the VMs on that host becoming unavailable. Most of the time this is an outage that lasts around 20 minutes but sometimes, the servers don't come back online and end up stuck in a "starting" state.
+
+When they are stuck like this you can't do anything with them in the management portal — your only option is to wait it out or get in via the Azure PowerShell command line. You can read how to get started with that in the [Azure docs](http://www.windowsazure.com/en-us/documentation/articles/install-configure-powershell/).
+
+## The fix
+
+Once you've got PowerShell set up, show your list of VMs to validate you're in the right subscription:
+
+```powershell
+Get-AzureVM
+```
+
+If you need to change your subscription:
+
+```powershell
+Select-AzureSubscription -SubscriptionName "Name of Subscription here"
+```
+
+From there it's pretty simple:
+
+```powershell
+Stop-AzureVM -Name NameofVM -ServiceName NameofService -Force
+```
+
+It will take up to 30 seconds and then come back and tell you it succeeded. From there you can go into the portal and refresh, then start it manually. Alternatively you can start it with `Start-AzureVM` but I recommend doing it in the portal for the peace of mind of watching it stop and then starting it by hand. My experience has shown that this can take up to 20 minutes to get the VM back online.
+
+I hope this is helpful to anyone else who ends up in this situation.

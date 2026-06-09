@@ -1,0 +1,48 @@
+---
+title: "Why I went 29 kW and skipped the Powerwalls"
+description: "Base Power's free 40 kW virtual backup, CoServ net metering at 8.6¢, and why an oversized system beat $25,000 in batteries."
+date: "June 8, 2026"
+dateSort: "2026-06-08"
+category: solar
+tags: [solar, base-power, coserv, tesla, energy]
+---
+
+Contract signed. Permit in hand. 65 all-black Canadian Solar TOPHiKu6 panels going on the roof at 28.925 kW DC. This is the first post in what will become an ongoing journal of the whole experience — from permitting through installation, first generation, and eventually the data nerd phase where I wire up live telemetry.
+
+But first: why this system, and why no Powerwalls?
+
+## The setup
+
+The quote was straightforward: 65 × 445W panels, two Tesla solar inverters, deployed by Solartime USA on a roof in Flower Mound, TX. The system is projected to generate 36,446 kWh per year against our annual usage of about 32,100 kWh. That's 114% — we'll be net positive, selling about 4,300 kWh back to CoServ annually.
+
+The solar-only price: $53,500. The solar + two Tesla Powerwall 3 batteries: $78,000.
+
+I went solar only.
+
+## Enter Base Power
+
+Here's what most solar installers won't tell you, because most people don't ask: CoServ has partnered with [Base Power](https://www.basepower.com/), a Texas retail electricity provider founded by ex-Tesla people, that operates a virtual power plant (VPP) program in the DFW area.
+
+The deal: you get free 40 kW of battery backup through Base Power's grid services network. They aggregate distributed solar customers, dispatch capacity during ERCOT peak events, and in return you get backup power coverage. The batteries are virtual — they live in the grid infrastructure — but the backup protection is real.
+
+That changes the math entirely. The two Powerwalls I was considering would have cost $25,000 after rebate. The Base Power program gives me equivalent backup protection for free, in exchange for some grid flexibility during high-demand periods I'd never notice anyway.
+
+## The net metering math
+
+CoServ buys my surplus at **8.6¢/kWh**. I buy power from them at **12¢/kWh**.
+
+The spread is only 3.4 cents, but the volume is what matters. Going oversized — 114% of usage rather than the typical 100% target — means I'm pushing more kWh to the grid all day, banking credits that offset my nighttime and cloudy-day consumption. The effective cost of electricity over 25 years works out to **$0.062/kWh**, compared to CoServ's current rate that will only go up.
+
+## The future-proofing angle
+
+We don't have an electric vehicle yet. We will. An EV adds roughly 3,000–5,000 kWh/year depending on miles. The oversized system absorbs that load without needing to re-evaluate.
+
+Home robotics are coming faster than people think. I don't know what the load will be, but it won't be zero. Neither will the general trend in Texas summers, grid instability (anyone who lived through Uri and the 2023 peak demand warnings knows ERCOT is a real concern), and the cost of grid electricity.
+
+The name SolarCurve was originally a photo retouching technique. Funny enough, it's quite literal now.
+
+## What's next
+
+I'll post updates as the installation progresses. Once the system is live, I'll wire up the Tesla Energy API to show live production data on the homepage widget. After that: data analysis, export tracking, and whatever else gets interesting.
+
+If you're in DFW and considering solar, the Base Power angle is worth a conversation before you sign anything.

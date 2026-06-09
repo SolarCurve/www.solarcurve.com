@@ -1,0 +1,31 @@
+---
+// SteamWidget.astro
+// Future: wire up Steam Web API (GET /ISteamUser/GetPlayerSummaries, /IPlayerService/GetRecentlyPlayedGames)
+// Set STEAM_API_KEY and STEAM_VANITY_URL in environment variables
+---
+
+<div class="widget-card h-full flex flex-col">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-game-400 text-[15px]">🎮</span>
+    <span class="text-[11px] text-muted font-medium tracking-widest uppercase">Gaming</span>
+  </div>
+
+  <div class="flex items-center gap-2.5 mb-3">
+    <div class="w-9 h-9 rounded-lg bg-[#1b2838] border border-[#2a475e] flex items-center justify-center flex-shrink-0">
+      <span class="text-[11px] text-[#c6d4df] font-medium">SC</span>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-star m-0 leading-tight">SolarCurve</p>
+      <p class="text-[11px] text-game-400 m-0 leading-tight">● Online</p>
+    </div>
+  </div>
+
+  <div class="bg-void rounded-lg px-3 py-2 border border-border mb-3 flex-1">
+    <p class="text-[10px] text-muted mb-0.5">recently played</p>
+    <p class="text-[13px] text-bright font-medium m-0">Counter-Strike 2</p>
+  </div>
+
+  <p class="text-[10px] text-muted text-right mt-auto">
+    TAU squad · playing since 2000
+  </p>
+</div>

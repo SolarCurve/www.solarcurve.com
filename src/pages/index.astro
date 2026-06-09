@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import SteamWidget from '../components/SteamWidget.astro';
+import SolarWidget from '../components/SolarWidget.astro';
+import TauWidget from '../components/TauWidget.astro';
+import PostCard from '../components/PostCard.astro';
+import Footer from '../components/Footer.astro';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts
+  .sort((a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime())
+  .slice(0, 6);
+---
+
+<BaseLayout>
+  <Nav />
+  <Hero />
+
+  <!-- Widgets -->
+  <section class="px-6 md:px-10 py-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <SteamWidget />
+    <SolarWidget />
+    <TauWidget />
+  </section>
+
+  <!-- Recent Posts -->
+  <section class="px-6 md:px-10 pb-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-sm font-medium text-star">Recent posts</h2>
+      <a href="/blog" class="text-xs text-dim hover:text-bright transition-colors">
+        All posts →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {posts.map(post => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>

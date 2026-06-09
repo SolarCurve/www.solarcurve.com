@@ -1,0 +1,63 @@
+---
+// SolarWidget.astro
+// Installation phases — update SOLAR_PHASE in env to advance the timeline:
+//   "signed" | "permitted" | "installed" | "live"
+// When "live": wire up Tesla Energy API
+//   GET https://fleet-api.prd.na.vn.cloud.tesla.com/api/1/energy_sites/{site_id}/live_status
+//   Returns: solar_power, battery_power, load_power, grid_power
+
+const phase = import.meta.env.SOLAR_PHASE ?? 'permitted';
+const phases = ['signed', 'permitted', 'installed', 'live'];
+const currentIdx = phases.indexOf(phase);
+---
+
+<div class="widget-card h-full flex flex-col border-[#30230a]">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-solar-600 text-[15px]">☀</span>
+    <span class="text-[11px] text-muted font-medium tracking-widest uppercase">Solar system</span>
+  </div>
+
+  {phase === 'live' ? (
+    <!-- Live data state — populate via Tesla API -->
+    <div>
+      <div class="flex items-baseline gap-2 mb-1">
+        <span id="solar-kw" class="text-4xl font-medium text-solar-300">—</span>
+        <span class="text-sm text-dim">kW live</span>
+      </div>
+      <p class="text-[11px] text-dim mb-3">of 28.9 kW peak · 65 panels · Flower Mound TX</p>
+      <div class="grid grid-cols-2 gap-2 text-[11px]">
+        <div class="bg-void rounded-lg p-2 border border-border">
+          <p class="text-muted mb-0.5">Today's yield</p>
+          <p id="today-kwh" class="font-medium text-bright">— kWh</p>
+        </div>
+        <div class="bg-void rounded-lg p-2 border border-border">
+          <p class="text-muted mb-0.5">Grid export</p>
+          <p id="export-kwh" class="font-medium text-solar-600">— kWh</p>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <>
+      <div class="flex items-baseline gap-2 mb-1">
+        <span class="text-4xl font-medium text-solar-300">28.9</span>
+        <span class="text-sm text-dim">kW DC</span>
+      </div>
+      <p class="text-[11px] text-dim mb-3">65 panels · 2 Tesla inverters · Flower Mound TX</p>
+
+      <div class="grid grid-cols-4 gap-1 mb-2">
+        {phases.map((p, i) => (
+          <div>
+            <div class={`h-0.5 rounded-full mb-1 ${i <= currentIdx ? 'bg-solar-600' : 'bg-border'}`}></div>
+            <p class={`text-[9px] ${i <= currentIdx ? 'text-solar-600' : 'text-muted'} leading-tight`}>
+              {p.charAt(0).toUpperCase() + p.slice(1)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+
+  <p class="text-[10px] text-muted text-right mt-auto pt-1">
+    36,446 kWh/yr projected · 114% offset
+  </p>
+</div>
