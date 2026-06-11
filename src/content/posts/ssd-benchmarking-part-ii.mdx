@@ -1,0 +1,30 @@
+---
+title: "SSD benchmarking, testing, and tuning — Part II"
+description: "Thirty minutes after posting Part I, I figured out why the SATA 3 controller card was slower than onboard SATA 2. It's the PCI-e 1x slot."
+date: "October 21, 2011"
+dateSort: "2011-10-21"
+category: tech
+tags: [ssd, hardware, benchmarking, pci-express, storage]
+---
+
+So it's been a whole 30 minutes since I published [Part I](/blog/ssd-benchmarking) and I already have the answers I was seeking. As many fellow bloggers know, the act of writing something down, thinking it through, and revisiting it even a few minutes later grants great clarity.
+
+After posting and tweeting, I had the idea that the bus speed of the SATA 3 controller card might not be enough. The market on Amazon and NewEgg is littered with controllers that are PCI Express 1x. I started looking at posts and speeds on this port — and sure enough, that's what my new drive was topping out at.
+
+The onboard SATA 2 controller didn't have that limitation, so it was able to go faster. My options: find a controller card that's more than 1x so it has more bandwidth, or update my motherboard to one with native SATA 3 onboard. If I'm going to do that, I might as well upgrade everything. Given that I'm an every-three-years upgrade kind of guy, I'm going to sit tight and wait until this time next year.
+
+Standards are always changing and technology is always evolving. I'm patient enough with my money to know I'll have more options and lower costs if I wait. For now, I'm going to appreciate my WEI disk score going from **5.9 to 7.8** — that's a pretty huge leap.
+
+## The slot situation
+
+I went down the road of reviewing how many PCI Express slots my motherboard has. While there are three PCI Express 2.0 slots, they operate in modes of 16x/16x/0, 16x/0x/16 (my configuration), or 16x/8x/8. This means that if I wanted to tap into that third slot, I'd hurt my video card performance. While I don't game across all four monitors at once, I do want to keep them all optimal — I occasionally flip on SLI and 3D.
+
+The SATA 3 controller cards that would fit were priced from $200 to $800. That's too much even for this enthusiast.
+
+I wish I had better news to report but it is what it is. In hindsight, I could have saved $30 by getting the non-GT version of the drive and not worrying about SATA 3 at all. I wish drive manufacturers released more real-world information — but I also understand why they don't.
+
+## Bonus fix
+
+I didn't know that total bandwidth among PCI Express 2.0 ports was limited and you couldn't run each slot at full 16x simultaneously. I had an eSATA controller card in my middle slot that was robbing one of my video cards and keeping it at 8x instead of 16x. I swapped it into the 1x slot I vacated by removing the SATA 3 card. Both video cards are now back to full speed.
+
+Always worth auditing what's in your expansion slots.

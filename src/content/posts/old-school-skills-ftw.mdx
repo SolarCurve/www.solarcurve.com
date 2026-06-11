@@ -1,0 +1,50 @@
+---
+title: "Old school skills FTW!"
+description: "A Buffalo Linkstation RAID 5 failed after 15 months. A Knoppix CD, some mdadm commands, and a healthy amount of sweat got the data back."
+date: "January 3, 2011"
+dateSort: "2011-01-03"
+category: tech
+tags: [linux, raid, data-recovery, buffalo, sysadmin]
+---
+
+FTW = For the Win. With that out of the way — I'm very pumped up right now that I was able to pull out my old school Linux skills to solve a very serious problem one of my best friends was having.
+
+## The situation
+
+My friend has a small business with three people doing quite a lot of work. Their data needs aren't huge, but they're real — print assets, maybe 2 terabytes total. At his request, I talked him into a Buffalo Linkstation Pro that holds about 4TB in RAID 5, so his data would be protected.
+
+After 15 months of solid use with no issues, they arrived at work one morning and it wouldn't work. We unplugged and re-plugged it. The device was stuck in a cycle of running disk checks and not allowing access to the data. We called Buffalo and they said it can take up to 8 hours per TB of raw disk. We waited two days — the device now showed up as offline.
+
+We did what any normal person with business data would do: found a duplicate model brand new and tried to swap the disks into it. The problem followed the disks. The new unit with the old drives had the same behavior. The old unit with new drives was fine.
+
+After trying various things over a few days, I threw in the towel on the Buffalo approach entirely.
+
+## The fix
+
+We went to Fry's and bought an eSATA drive array, put in the troubled drives, took a working PC, booted it with a **Knoppix Linux CD**, and within a few minutes using the commands below, everything was working.
+
+```bash
+fdisk -l
+# validate I could see all the physical disks
+
+mdadm --examine /dev/sde6
+# confirmed it was a member of a RAID5 group and other disks were present
+
+mdadm --assemble /dev/md0 /dev/sde6 /dev/sdf6 /dev/sdg6 /dev/sdh6
+# bound them together as a unit
+
+mkdir /mnt/raid
+mount -t xfs /dev/md0 /mnt/raid
+# mounted the RAID — data intact!
+
+mkdir /mnt/share
+mount -t smbfs 192.168.0.150:share /mnt/share
+# mounted the Windows share destination
+
+cp -r /mnt/raid /mnt/share
+# copied data off
+```
+
+There really wasn't any magic. I had to pull out all my old school skills and think it through. I was honestly a bit scared getting this involved on a drive containing someone else's critical business data. But it worked.
+
+I feel a HUGE relief. Posting this in case it helps someone else.
