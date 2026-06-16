@@ -10,7 +10,7 @@ const posts = allPosts.sort(
   (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
 );
 
-const categories = ['all', 'solar', 'gaming', 'crypto', 'tech'] as const;
+const categories = ['all', 'solar', 'gaming', 'crypto', 'tech', 'personal'] as const;
 ---
 
 <BaseLayout title="Blog" description="All posts from SolarCurve's House of Flamp.">
