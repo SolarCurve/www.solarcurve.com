@@ -65,9 +65,9 @@
     @apply bg-void border-border text-dim;
   }
 
-  .category-personal {
-    @apply bg-[#150d2a] border-[#6d44b8] text-[#a87de8];
-  }
+    .category-personal {
+          @apply bg-[#150d2a] border-[#6d44b8] text-[#a87de8];
+    }
 
   .post-card {
     @apply widget-card hover:border-muted transition-colors duration-150 cursor-pointer;
