@@ -16,17 +16,19 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 
 const categoryLabels: Record<string, string> = {
-  solar:  'Solar journey',
-  gaming: 'Gaming',
-  crypto: 'Crypto',
-  tech:   'Tech',
+  solar:    'Solar journey',
+  gaming:   'Gaming',
+  crypto:   'Crypto',
+  tech:     'Tech',
+  personal: 'Personal',
 };
 
 const categoryColors: Record<string, string> = {
-  solar:  'category-solar',
-  gaming: 'category-gaming',
-  crypto: 'category-crypto',
-  tech:   'category-tech',
+  solar:    'category-solar',
+  gaming:   'category-gaming',
+  crypto:   'category-crypto',
+  tech:     'category-tech',
+  personal: 'category-personal',
 };
 ---
 

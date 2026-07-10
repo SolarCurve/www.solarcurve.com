@@ -1,0 +1,77 @@
+---
+title: "Solar Is Live: First Week of Real Numbers (and a Correction)"
+description: "150 kWh generation days, a CoServ grid draw that's already cut in half, three Tesla inverters instead of two, and a battery install date from Base Power."
+date: "July 9, 2026"
+dateSort: "2026-07-09"
+category: solar
+tags: [solar, base-power, coserv, tesla, energy]
+---
+
+![The finished array, seen from the pool](/images/solar-array-and-pool.jpg)
+
+The panels are up, the inverters are wired, and the system has been generating real power for about a week now. We're still waiting on the City of Flower Mound to sign off on final inspection, so officially this is "installed, pending inspection" — but unofficially, it's live and making kilowatts.
+
+## The caveat first
+
+I don't want to oversell this data. We've had a lot of family in town this week, which means the pool pump and heater have been running on a schedule they normally wouldn't, plus general extra household load. None of these numbers are a clean baseline. Treat this post as "here's what the first week looked like," not "here's our steady-state number."
+
+## What the panels are doing
+
+Pulling straight from the Tesla app's daily generation totals:
+
+- **Fri 7/3:** 149.9 kWh
+- **Sat 7/4:** 149.8 kWh
+- **Sun 7/5:** 98.8 kWh (choppy, clouds rolling through most of the day)
+- **Mon 7/6:** 149.9 kWh
+- **Tue 7/7:** 140.5 kWh
+- **Wed 7/8:** 146.9 kWh
+
+Average across those six days: **~139 kWh/day**. On the clean-sky days the output curve tops out and just sits there — a flat plateau around 22 kW from roughly 11am to 3pm, even though the array is rated 28.9 kW DC. That's expected clipping against the inverter ceiling, not a problem.
+
+Which brings me to a correction.
+
+## Correcting the record: three inverters, not two
+
+My last post said "two Tesla solar inverters." Wrong — there are three of them mounted on the garage wall, feeding into a shared combiner panel.
+
+![Three Tesla inverters mounted on the garage wall](/images/solar-tesla-inverters.jpg)
+
+That third inverter is exactly why the clipping ceiling lands around 22 kW instead of something lower — three inverters gives more combined AC throughput than I was accounting for when I wrote the math in the last post. I'll leave the original post as-is for the record, but wanted to flag the correction here.
+
+## What CoServ is seeing
+
+The more interesting number isn't generation — it's grid draw, straight from the CoServ usage meter (Meter 468212).
+
+Pre-solar baseline, two full weeks:
+
+- **Jun 14–20:** avg ~119 kWh/day
+- **Jun 21–27:** avg ~122 kWh/day
+
+Then the cutover week, where you can see the exact day it flipped:
+
+- **Jun 28–Jul 1:** still baseline, 111–159 kWh/day
+- **Jul 2:** drops to 60 kWh/day
+- **Jul 3–4:** 82, 62 kWh/day
+
+And the most recent partial week (CoServ's app lags a few days on reporting):
+
+- **Jul 5–7:** 92, 78, 65 kWh/day
+
+So grid draw fell from a ~120 kWh/day pre-solar baseline to the 60–90 kWh/day range immediately after cutover — and that's *with* more people in the house and a pool running overtime, not less. This is pure daytime self-consumption doing the work. No battery is installed yet. That's the number I'll be watching once the family leaves and things settle back to normal — I expect it to drop further.
+
+## Base Power, corrected
+
+Last post, I described Base Power's battery program as virtual — capacity that "lives in the grid infrastructure" with no hardware at the house. That was incomplete. There's real, physical hardware coming to the property:
+
+- **July 21, 2026:** Base Power's phase 1 install — the base/mounting hardware goes in.
+- **About a week later:** they come back with the actual battery units to complete the installation.
+
+So the "free 40 kW of backup" isn't purely a grid-side abstraction — there's a physical battery sitting at the house as part of it. I'll post details once I see the hardware and understand how it's wired relative to the Tesla inverters.
+
+## What's next
+
+- Final inspection from the City of Flower Mound, and official permission to operate.
+- Base Power's two-visit battery install starting July 21.
+- Wiring the Tesla Energy API into the homepage widget so the "live" numbers on solarcurve.com are actually live, instead of me copy-pasting screenshots into blog posts.
+
+More once the family goes home and the pool stops skewing the data.

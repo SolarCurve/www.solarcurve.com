@@ -6,7 +6,7 @@
 //   GET https://fleet-api.prd.na.vn.cloud.tesla.com/api/1/energy_sites/{site_id}/live_status
 //   Returns: solar_power, battery_power, load_power, grid_power
 
-const phase = import.meta.env.SOLAR_PHASE ?? 'permitted';
+const phase = import.meta.env.SOLAR_PHASE ?? 'installed';
 const phases = ['signed', 'permitted', 'installed', 'live'];
 const currentIdx = phases.indexOf(phase);
 ---
@@ -42,7 +42,7 @@ const currentIdx = phases.indexOf(phase);
         <span class="text-4xl font-medium text-solar-300">28.9</span>
         <span class="text-sm text-dim">kW DC</span>
       </div>
-      <p class="text-[11px] text-dim mb-3">65 panels · 2 Tesla inverters · Flower Mound TX</p>
+      <p class="text-[11px] text-dim mb-3">65 panels · 3 Tesla inverters · Flower Mound TX</p>
 
       <div class="grid grid-cols-4 gap-1 mb-2">
         {phases.map((p, i) => (
@@ -54,6 +54,9 @@ const currentIdx = phases.indexOf(phase);
           </div>
         ))}
       </div>
+      {phase === 'installed' && (
+        <p class="text-[10px] text-dim">Generating now · pending final inspection</p>
+      )}
     </>
   )}
 

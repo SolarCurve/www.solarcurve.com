@@ -1,13 +1,30 @@
 ---
-// Hero.astro — space-themed canvas background with identity text overlay
+// Hero.astro — live NASA SDO solar photography background
+// Image: Solar Dynamics Observatory AIA 171 (extreme UV, 1 MK corona)
+// Updated every ~15 minutes by NASA. Public domain — U.S. government work.
 ---
 
 <section class="relative overflow-hidden" style="height: 340px;">
-  <canvas
-    id="hero-canvas"
-    class="absolute inset-0 w-full h-full block"
+  <!-- Live NASA solar image — updated every ~15 min by the SDO -->
+  <div
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    style="background-image: url('https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0171.jpg');"
     aria-hidden="true"
-  ></canvas>
+  ></div>
+
+  <!-- Dark overlay for left-side text readability -->
+  <div
+    class="absolute inset-0"
+    style="background: linear-gradient(to right, rgba(13,17,23,0.82) 0%, rgba(13,17,23,0.55) 45%, rgba(13,17,23,0.1) 100%);"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Bottom fade into page -->
+  <div
+    class="absolute bottom-0 left-0 right-0"
+    style="height: 80px; background: linear-gradient(to bottom, transparent, #0d1117);"
+    aria-hidden="true"
+  ></div>
 
   <div class="relative z-10 px-6 md:px-10 pt-14 pb-0">
     <p class="text-[11px] font-medium tracking-widest uppercase text-solar-300 mb-2">
@@ -22,182 +39,3 @@
     </p>
   </div>
 </section>
-
-<script>
-function drawHero() {
-  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
-  if (!canvas) return;
-
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const W = canvas.width;
-  const H = canvas.height;
-
-  // Deep space background
-  ctx.fillStyle = '#0d1117';
-  ctx.fillRect(0, 0, W, H);
-
-  // Deterministic star field
-  let seed = 42;
-  function rand() {
-    seed = (Math.imul(seed, 1664525) + 1013904223) | 0;
-    return (seed >>> 0) / 4294967295;
-  }
-
-  for (let i = 0; i < 280; i++) {
-    const x = rand() * W;
-    const y = rand() * H;
-    const r = rand() * 1.4 + 0.2;
-    const alpha = rand() * 0.55 + 0.25;
-    const warm = rand() > 0.82;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = warm
-      ? `rgba(255, 210, 120, ${alpha})`
-      : `rgba(255, 255, 255, ${alpha})`;
-    ctx.fill();
-  }
-
-  // Feature stars with cross rays
-  const featureStars: [number, number][] = [
-    [W * 0.14, H * 0.2],
-    [W * 0.48, H * 0.1],
-    [W * 0.06, H * 0.52],
-    [W * 0.28, H * 0.72],
-  ];
-  featureStars.forEach(([x, y]) => {
-    ctx.beginPath();
-    ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.fill();
-    [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => {
-      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(x + dx * 4, y + dy * 4);
-      ctx.lineTo(x + dx * 10, y + dy * 10);
-      ctx.stroke();
-    });
-  });
-
-  // Sun — top right, partially cropped
-  const sunX = W * 0.81;
-  const sunY = H * 0.06;
-  const sunR = H * 0.68;
-
-  // Outer atmospheric glow rings
-  [4, 3, 2, 1].forEach(ring => {
-    ctx.beginPath();
-    ctx.arc(sunX, sunY, sunR + ring * 28, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(234, 88, 12, ${0.018 * ring})`;
-    ctx.fill();
-  });
-
-  // Corona rays
-  for (let i = 0; i < 40; i++) {
-    const angle = (i / 40) * Math.PI * 2;
-    const big = i % 6 === 0;
-    const med = i % 3 === 0;
-    const len = sunR * (big ? 0.65 : med ? 0.35 : 0.18 + rand() * 0.2);
-    const alpha = big ? 0.2 : med ? 0.1 : 0.06;
-    const width = big ? 3 : med ? 1.5 : 0.8;
-    ctx.beginPath();
-    ctx.moveTo(
-      sunX + Math.cos(angle) * sunR * 0.96,
-      sunY + Math.sin(angle) * sunR * 0.96
-    );
-    ctx.lineTo(
-      sunX + Math.cos(angle) * (sunR + len),
-      sunY + Math.sin(angle) * (sunR + len)
-    );
-    ctx.strokeStyle = `rgba(251, 191, 36, ${alpha})`;
-    ctx.lineWidth = width;
-    ctx.stroke();
-  }
-
-  // Sun body with radial gradient
-  const sg = ctx.createRadialGradient(
-    sunX - sunR * 0.15, sunY - sunR * 0.15, sunR * 0.04,
-    sunX, sunY, sunR
-  );
-  sg.addColorStop(0,    '#fffbeb');
-  sg.addColorStop(0.08, '#fef3c7');
-  sg.addColorStop(0.25, '#fbbf24');
-  sg.addColorStop(0.5,  '#f97316');
-  sg.addColorStop(0.72, '#ea580c');
-  sg.addColorStop(0.9,  '#dc2626');
-  sg.addColorStop(1,    'rgba(185, 28, 28, 0)');
-  ctx.beginPath();
-  ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
-  ctx.fillStyle = sg;
-  ctx.fill();
-
-  // Solar surface texture (subtle flare patches)
-  for (let i = 0; i < 7; i++) {
-    const angle = rand() * Math.PI * 2;
-    const dist = sunR * (0.45 + rand() * 0.4);
-    const fx = sunX + Math.cos(angle) * dist;
-    const fy = sunY + Math.sin(angle) * dist;
-    ctx.beginPath();
-    ctx.arc(fx, fy, sunR * (0.08 + rand() * 0.1), 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(254, 215, 100, 0.1)';
-    ctx.fill();
-  }
-
-  // Ringed planet — lower left
-  const px = W * 0.065;
-  const py = H * 0.76;
-  const pr = Math.min(W, H) * 0.048;
-  const pg = ctx.createRadialGradient(px - pr * 0.3, py - pr * 0.3, 1, px, py, pr);
-  pg.addColorStop(0, '#3b6cb7');
-  pg.addColorStop(1, '#1a2f5e');
-  ctx.beginPath();
-  ctx.arc(px, py, pr, 0, Math.PI * 2);
-  ctx.fillStyle = pg;
-  ctx.fill();
-  // Rings
-  ctx.beginPath();
-  ctx.ellipse(px, py, pr * 2.1, pr * 0.42, -0.25, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(160, 190, 255, 0.38)';
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(px, py, pr * 1.55, pr * 0.3, -0.25, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(160, 190, 255, 0.18)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Subtle nebula wisps (mid-scene warmth)
-  ctx.beginPath();
-  ctx.ellipse(W * 0.33, H * 0.48, 70, 28, 0.4, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(234, 88, 12, 0.03)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(W * 0.4, H * 0.38, 45, 18, -0.2, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(251, 191, 36, 0.025)';
-  ctx.fill();
-
-  // Bottom fade into page background
-  const fade = ctx.createLinearGradient(0, H * 0.52, 0, H);
-  fade.addColorStop(0, 'rgba(13,17,23,0)');
-  fade.addColorStop(1, 'rgba(13,17,23,1)');
-  ctx.fillStyle = fade;
-  ctx.fillRect(0, H * 0.52, W, H * 0.48);
-
-  // Left fade so text is readable
-  const leftFade = ctx.createLinearGradient(0, 0, W * 0.42, 0);
-  leftFade.addColorStop(0, 'rgba(13,17,23,0.72)');
-  leftFade.addColorStop(1, 'rgba(13,17,23,0)');
-  ctx.fillStyle = leftFade;
-  ctx.fillRect(0, 0, W * 0.42, H);
-}
-
-// Draw on load and redraw on resize
-drawHero();
-const resizeObserver = new ResizeObserver(() => drawHero());
-const canvas = document.getElementById('hero-canvas');
-if (canvas) resizeObserver.observe(canvas);
-</script>
