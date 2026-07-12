@@ -1,31 +1,74 @@
 ---
-// SteamWidget.astro
-// Future: wire up Steam Web API (GET /ISteamUser/GetPlayerSummaries, /IPlayerService/GetRecentlyPlayedGames)
-// Set STEAM_API_KEY and STEAM_VANITY_URL in environment variables
+// SteamWidget.astro — real Steam profile data, fetched at build time.
+// Tiers: profile XML always (no key); library stats when STEAM_API_KEY is set.
+// If everything fails, renders the static fallback so builds never break.
+import { getSteamData } from '../lib/steam';
+
+const steam = await getSteamData();
 ---
 
-<div class="widget-card h-full flex flex-col">
+<a
+  href={steam?.profileUrl ?? 'https://steamcommunity.com/id/SolarCurve/'}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="widget-card h-full flex flex-col group"
+>
   <div class="flex items-center gap-2 mb-3">
     <span class="text-game-400 text-[15px]">🎮</span>
     <span class="text-[11px] text-muted font-medium tracking-widest uppercase">Gaming</span>
   </div>
 
-  <div class="flex items-center gap-2.5 mb-3">
-    <div class="w-9 h-9 rounded-lg bg-[#1b2838] border border-[#2a475e] flex items-center justify-center flex-shrink-0">
-      <span class="text-[11px] text-[#c6d4df] font-medium">SC</span>
-    </div>
-    <div>
-      <p class="text-sm font-medium text-star m-0 leading-tight">SolarCurve</p>
-      <p class="text-[11px] text-game-400 m-0 leading-tight">● Online</p>
-    </div>
-  </div>
+  {steam ? (
+    <>
+      <div class="flex items-center gap-2.5 mb-3">
+        <img
+          src={steam.avatar}
+          alt={`${steam.persona} Steam avatar`}
+          width="36"
+          height="36"
+          class="w-9 h-9 rounded-lg border border-[#2a475e] flex-shrink-0"
+          loading="lazy"
+        />
+        <div>
+          <p class="text-sm font-medium text-star m-0 leading-tight group-hover:text-game-400 transition-colors">
+            {steam.persona}
+          </p>
+          <p class="text-[11px] text-dim m-0 leading-tight">
+            Steam member since {steam.memberSince.split(', ')[1] ?? steam.memberSince}
+            · {steam.memberYears} years
+          </p>
+        </div>
+      </div>
 
-  <div class="bg-void rounded-lg px-3 py-2 border border-border mb-3 flex-1">
-    <p class="text-[10px] text-muted mb-0.5">recently played</p>
-    <p class="text-[13px] text-bright font-medium m-0">Counter-Strike 2</p>
-  </div>
+      {steam.topGames?.length ? (
+        <div class="bg-void rounded-lg px-3 py-2 border border-border mb-3 flex-1">
+          <p class="text-[10px] text-muted mb-0.5">
+            most played · {steam.gameCount} games · {steam.totalHours?.toLocaleString()} hrs
+          </p>
+          {steam.topGames.map(game => (
+            <p class="text-[12px] text-bright m-0 leading-snug flex justify-between gap-2">
+              <span class="truncate">{game.name}</span>
+              <span class="text-muted flex-shrink-0">{game.hours.toLocaleString()}h</span>
+            </p>
+          ))}
+        </div>
+      ) : (
+        <div class="bg-void rounded-lg px-3 py-2 border border-border mb-3 flex-1">
+          <p class="text-[10px] text-muted mb-0.5">steam profile</p>
+          <p class="text-[13px] text-bright font-medium m-0">
+            Fragging since before it had a name →
+          </p>
+        </div>
+      )}
+    </>
+  ) : (
+    <div class="bg-void rounded-lg px-3 py-2 border border-border mb-3 flex-1">
+      <p class="text-[10px] text-muted mb-0.5">steam profile</p>
+      <p class="text-[13px] text-bright font-medium m-0">TAU|SolarCurve →</p>
+    </div>
+  )}
 
   <p class="text-[10px] text-muted text-right mt-auto">
     TAU squad · playing since 2000
   </p>
-</div>
+</a>
