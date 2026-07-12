@@ -31,7 +31,7 @@ export default {
     const url = new URL(request.url);
     try {
       switch (url.pathname) {
-        case '/api/solar':          return await solarData(env);
+        case '/api/solar':          return await solarData(env, url.searchParams.has('raw'));
         case '/api/tesla/login':    return await login(env);
         case '/api/tesla/callback': return await callback(url, env);
         case '/api/tesla/status':   return await status(env);
@@ -135,9 +135,9 @@ async function getAccessToken(env) {
 
 // ── Solar data ───────────────────────────────────────────────────────────────
 
-async function solarData(env) {
+async function solarData(env, raw = false) {
   const cached = await env.TESLA.get('cache:solar', 'json');
-  if (cached && Date.now() - cached.fetched_at < CACHE_TTL * 1000) {
+  if (!raw && cached && Date.now() - cached.fetched_at < CACHE_TTL * 1000) {
     return new Response(JSON.stringify(cached), { headers: JSON_HEADERS });
   }
 
@@ -157,11 +157,18 @@ async function solarData(env) {
       `/api/1/energy_sites/${siteId}/calendar_history?kind=energy&period=day&end_date=${encodeURIComponent(end)}&time_zone=${encodeURIComponent(tz)}`,
       token
     )).response;
-    const day = hist?.time_series?.at(-1);
-    if (day) {
+    if (raw) {
+      return new Response(JSON.stringify(hist, null, 2), { headers: JSON_HEADERS });
+    }
+    // period=day returns 5-minute buckets (Wh) for the current day — sum them.
+    // Note: this site meters solar production only (no consumption CTs yet),
+    // so load/export fields from Tesla are not meaningful.
+    const buckets = hist?.time_series;
+    if (buckets?.length) {
+      const wh = buckets.map(b => b.solar_energy_exported ?? 0);
       today = {
-        solar_kwh: round1((day.solar_energy_exported ?? 0) / 1000),
-        grid_export_kwh: round1((day.grid_energy_exported_from_solar ?? day.grid_energy_exported ?? 0) / 1000),
+        solar_kwh: round1(wh.reduce((t, v) => t + v, 0) / 1000),
+        peak_kw: round1(Math.max(...wh) * 12 / 1000), // Wh per 5-min bucket → avg kW in that bucket
       };
     }
   } catch (err) {

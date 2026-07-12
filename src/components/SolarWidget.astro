@@ -29,8 +29,8 @@ const currentIdx = phases.indexOf(phase);
           <p id="today-kwh" class="font-medium text-bright">— kWh</p>
         </div>
         <div class="bg-void rounded-lg p-2 border border-border">
-          <p class="text-muted mb-0.5">Grid export</p>
-          <p id="export-kwh" class="font-medium text-solar-600">— kWh</p>
+          <p class="text-muted mb-0.5">Peak today</p>
+          <p id="peak-kw" class="font-medium text-solar-600">— kW</p>
         </div>
       </div>
       <script is:inline>
@@ -47,7 +47,7 @@ const currentIdx = phases.indexOf(phase);
               set('solar-kw', (d.solar_power_w / 1000).toFixed(1));
               if (d.today) {
                 set('today-kwh', `${d.today.solar_kwh} kWh`);
-                set('export-kwh', `${d.today.grid_export_kwh} kWh`);
+                set('peak-kw', `${d.today.peak_kw} kW`);
               }
             } catch { /* leave dashes on failure */ }
           }
