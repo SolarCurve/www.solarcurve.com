@@ -2,9 +2,8 @@
 // SolarWidget.astro
 // Installation phases — update SOLAR_PHASE in env to advance the timeline:
 //   "signed" | "permitted" | "installed" | "live"
-// When "live": wire up Tesla Energy API
-//   GET https://fleet-api.prd.na.vn.cloud.tesla.com/api/1/energy_sites/{site_id}/live_status
-//   Returns: solar_power, battery_power, load_power, grid_power
+// "live" fetches /api/solar client-side — a Cloudflare Worker (worker/) that
+// proxies Tesla Fleet API live_status with token refresh and a 120s cache.
 
 const phase = import.meta.env.SOLAR_PHASE ?? 'installed';
 const phases = ['signed', 'permitted', 'installed', 'live'];
@@ -18,7 +17,6 @@ const currentIdx = phases.indexOf(phase);
   </div>
 
   {phase === 'live' ? (
-    <!-- Live data state — populate via Tesla API -->
     <div>
       <div class="flex items-baseline gap-2 mb-1">
         <span id="solar-kw" class="text-4xl font-medium text-solar-300">—</span>
@@ -35,6 +33,28 @@ const currentIdx = phases.indexOf(phase);
           <p id="export-kwh" class="font-medium text-solar-600">— kWh</p>
         </div>
       </div>
+      <script is:inline>
+        (() => {
+          const set = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+          };
+          async function refresh() {
+            try {
+              const res = await fetch('/api/solar');
+              if (!res.ok) return; // leave dashes on failure
+              const d = await res.json();
+              set('solar-kw', (d.solar_power_w / 1000).toFixed(1));
+              if (d.today) {
+                set('today-kwh', `${d.today.solar_kwh} kWh`);
+                set('export-kwh', `${d.today.grid_export_kwh} kWh`);
+              }
+            } catch { /* leave dashes on failure */ }
+          }
+          refresh();
+          setInterval(refresh, 120_000); // matches the worker's cache window
+        })();
+      </script>
     </div>
   ) : (
     <>

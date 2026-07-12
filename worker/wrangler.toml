@@ -1,0 +1,19 @@
+name = "solarcurve-solar-api"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+
+# Runs on the site's own origin — /api/* never reaches the DigitalOcean origin.
+routes = [
+  { pattern = "www.solarcurve.com/api/*", zone_name = "solarcurve.com" }
+]
+
+# KV holds OAuth tokens (Tesla refresh tokens are single-use and rotate on
+# every refresh, so they MUST be persisted) plus a short-lived data cache.
+# Created with: npx wrangler kv namespace create TESLA
+[[kv_namespaces]]
+binding = "TESLA"
+id = "PLACEHOLDER_SET_AFTER_CREATE"
+
+# Secrets (set with `npx wrangler secret put <NAME>`):
+#   TESLA_CLIENT_ID
+#   TESLA_CLIENT_SECRET
