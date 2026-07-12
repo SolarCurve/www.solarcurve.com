@@ -1,6 +1,7 @@
 name = "solarcurve-solar-api"
 main = "src/index.js"
 compatibility_date = "2026-07-01"
+account_id = "01170e57bb8b525548e92fda84d70507" # Pdrew's personal account (holds the solarcurve.com zone)
 
 # Runs on the site's own origin — /api/* never reaches the DigitalOcean origin.
 routes = [
@@ -12,7 +13,7 @@ routes = [
 # Created with: npx wrangler kv namespace create TESLA
 [[kv_namespaces]]
 binding = "TESLA"
-id = "PLACEHOLDER_SET_AFTER_CREATE"
+id = "68ea1536910147b2bd075b2075a85c77"
 
 # Secrets (set with `npx wrangler secret put <NAME>`):
 #   TESLA_CLIENT_ID
