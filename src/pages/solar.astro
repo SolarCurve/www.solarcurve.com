@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import SolarWidget from '../components/SolarWidget.astro';
+import PostCard from '../components/PostCard.astro';
+import Footer from '../components/Footer.astro';
+
+const allPosts = await getCollection(
+  'posts',
+  ({ data }) => !data.draft && data.category === 'solar'
+);
+const posts = allPosts.sort(
+  (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
+);
+---
+
+<BaseLayout
+  title="Solar journey"
+  description="Following a 28.9 kW rooftop solar install in Flower Mound, TX from contract to live generation data — panels, inverters, net metering, and the numbers."
+>
+  <Nav />
+
+  <main class="px-6 md:px-10 py-10 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-medium text-star mb-1">Solar journey</h1>
+    <p class="text-sm text-dim mb-8">
+      An ongoing journal of putting 65 panels on a Texas roof — the decision math,
+      the install, first generation numbers, and eventually live production data
+      wired straight from the inverters.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
+      <SolarWidget />
+      <div class="widget-card h-full flex flex-col">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-solar-600 text-[15px]">🗺</span>
+          <span class="text-[11px] text-muted font-medium tracking-widest uppercase">Where things stand</span>
+        </div>
+        <ul class="text-[12px] text-bright leading-relaxed space-y-1.5 flex-1 m-0 list-none p-0">
+          <li>✅ System live and generating (120–150 kWh/day)</li>
+          <li>⏳ Final city inspection pending</li>
+          <li>🔋 Base Power battery install — phase 1 July 21, 2026</li>
+          <li>📡 Next up: live Tesla API data on this page</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="text-sm font-medium text-star mb-4">Solar posts</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {posts.map(post => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

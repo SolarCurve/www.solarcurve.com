@@ -10,11 +10,12 @@ interface Props {
 const {
   title = "House of Flamp",
   description = "SolarCurve's personal blog. Esports founder, tech company builder, solar power enthusiast, lifelong gamer. Flower Mound, TX.",
-  ogImage = "/og-default.png",
+  ogImage = "/og-default.jpg",
 } = Astro.props;
 
 const siteName = "SolarCurve";
 const fullTitle = title === "House of Flamp" ? `${siteName}'s ${title}` : `${title} — ${siteName}`;
+const ogImageUrl = new URL(ogImage, Astro.site ?? Astro.url.origin).href;
 ---
 
 <!doctype html>
@@ -27,9 +28,11 @@ const fullTitle = title === "House of Flamp" ? `${siteName}'s ${title}` : `${tit
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
+    <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

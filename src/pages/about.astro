@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="Paul Drew — esports founder, tech company builder, solar power enthusiast, lifelong gamer. The person behind SolarCurve and the House of Flamp."
+>
+  <Nav />
+
+  <main class="px-6 md:px-10 py-10 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-medium text-star mb-8">About</h1>
+
+    <img
+      src="/images/paul_commodore_adult.jpg"
+      alt="Paul Drew with a Commodore 64"
+      class="rounded-lg border border-border mb-8 w-full max-w-md"
+    />
+
+    <div class="space-y-5 text-[15px] text-bright leading-relaxed">
+      <p>
+        I'm Paul. This is the House of Flamp — my corner of the internet in
+        Flower Mound, TX.
+      </p>
+      <p>
+        The whole thing started when Hasbro ran a contest to name the next Care
+        Bear and a six-year-old won a Commodore 64 for suggesting "Tender Heart."
+        No instructions, no saved games — just a keyboard, a blank screen, and
+        weeks-long marathons keeping the machine powered on so my text-based RPGs
+        wouldn't vanish. That machine taught me patience with hard problems, and
+        I've been chasing the feeling of <em>something finally working</em> ever since.
+      </p>
+      <p>
+        No college degree, no map — just work. I went from sacking groceries and
+        running the McDonald's prep line to riding the printing industry's leap
+        from Exacto knives to digital production, then across the wall into tech
+        proper. I spent a decade building a multi-million dollar "Content
+        Logistics" business in the messy space between the agencies that create
+        content and the providers that host it, and I've been at this for thirty
+        years now. The credential is rarely the thing. Showing up is the thing.
+      </p>
+      <p>
+        Along the way I founded the Texas Area Untouchables (TAU), competed in
+        CAL-Invite and at CPL LANs, and ran gaming cafes that helped build DFW's
+        esports infrastructure from 2000–2005 — years before "esports" was a word
+        anyone's parents knew. I still play. FPS games were my gateway and remain
+        my stress relief of choice.
+      </p>
+      <p>
+        The current obsession is the roof: 28.9 kW of solar — 65 panels feeding
+        3 Tesla inverters — generating more than the house uses. The
+        <a href="/solar" class="text-solar-300 hover:underline">solar journey</a>
+        section tracks the whole project from contract to live data, and the
+        data-nerd phase is just getting started.
+      </p>
+      <p>
+        The name SolarCurve? It was a photo-retouching technique long before it
+        was a rooftop. Funny how these things work out.
+      </p>
+      <p class="text-dim text-sm">
+        Find me on
+        <a href="https://steamcommunity.com/id/solarcurve" target="_blank" rel="noopener noreferrer" class="text-solar-300 hover:underline">Steam</a>
+        or
+        <a href="https://github.com/SolarCurve" target="_blank" rel="noopener noreferrer" class="text-solar-300 hover:underline">GitHub</a>,
+        or dig through the
+        <a href="https://solarcurve.blogspot.com" target="_blank" rel="noopener noreferrer" class="text-solar-300 hover:underline">old blog archive</a>
+        going back to 2009.
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

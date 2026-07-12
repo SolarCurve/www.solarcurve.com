@@ -1,21 +1,15 @@
 ---
+import { categoryLabels, type Category } from '../lib/categories';
+
 interface Props {
   title: string;
   description?: string;
   date: string;
-  category: 'solar' | 'gaming' | 'crypto' | 'tech' | 'personal';
+  category: Category;
   slug: string;
 }
 
 const { title, description, date, category, slug } = Astro.props;
-
-const categoryLabels: Record<string, string> = {
-  solar:  'Solar journey',
-  gaming: 'Gaming',
-  crypto: 'Crypto',
-  tech:   'Tech',
-  personal: 'Personal',
-};
 ---
 
 <a href={`/posts/${slug}`} class="post-card block group">

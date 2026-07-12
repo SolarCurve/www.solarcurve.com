@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import SteamWidget from '../components/SteamWidget.astro';
+import TauWidget from '../components/TauWidget.astro';
+import PostCard from '../components/PostCard.astro';
+import Footer from '../components/Footer.astro';
+
+const allPosts = await getCollection(
+  'posts',
+  ({ data }) => !data.draft && data.category === 'gaming'
+);
+const posts = allPosts.sort(
+  (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
+);
+---
+
+<BaseLayout
+  title="Gaming"
+  description="FPS games, the TAU esports era, gaming cafes, and two decades of left-clicking on faces. SolarCurve's gaming history."
+>
+  <Nav />
+
+  <main class="px-6 md:px-10 py-10 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-medium text-star mb-1">Gaming</h1>
+    <p class="text-sm text-dim mb-8">
+      From founding the Texas Area Untouchables and building DFW esports infrastructure
+      in the early 2000s to still queuing up today. Playing since 2000, no signs of stopping.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
+      <SteamWidget />
+      <TauWidget />
+    </div>
+
+    <h2 class="text-sm font-medium text-star mb-4">Gaming posts</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {posts.map(post => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
