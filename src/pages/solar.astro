@@ -1,18 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import SolarWidget from '../components/SolarWidget.astro';
 import PostCard from '../components/PostCard.astro';
 import Footer from '../components/Footer.astro';
+import { getSortedPosts } from '../lib/posts';
 
-const allPosts = await getCollection(
-  'posts',
-  ({ data }) => !data.draft && data.category === 'solar'
-);
-const posts = allPosts.sort(
-  (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
-);
+const posts = await getSortedPosts('solar');
 ---
 
 <BaseLayout

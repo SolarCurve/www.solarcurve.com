@@ -29,21 +29,31 @@ const JSON_HEADERS = {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // Setup/debug endpoints require ?key=<SETUP_KEY worker secret>. The OAuth
+    // callback is instead gated by its single-use state (issued only via a
+    // keyed /login), so a drive-by visitor can't overwrite the stored tokens.
+    const authed = Boolean(env.SETUP_KEY) && url.searchParams.get('key') === env.SETUP_KEY;
     try {
       switch (url.pathname) {
-        case '/api/solar':          return await solarData(env, url.searchParams.has('raw'));
-        case '/api/tesla/login':    return await login(env);
+        case '/api/solar':          return await solarData(env, url.searchParams.has('raw') && authed);
+        case '/api/tesla/login':    return authed ? await login(env) : notFound();
         case '/api/tesla/callback': return await callback(url, env);
-        case '/api/tesla/status':   return await status(env);
+        case '/api/tesla/status':   return authed ? await status(env) : notFound();
         default:
-          return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: JSON_HEADERS });
+          return notFound();
       }
     } catch (err) {
+      // Upstream error detail (statuses, response bodies) stays in the logs —
+      // the public response is generic.
       console.error(`[solar-api] ${url.pathname}: ${err.message}`);
-      return new Response(JSON.stringify({ error: err.message }), { status: 502, headers: JSON_HEADERS });
+      return new Response(JSON.stringify({ error: 'upstream error' }), { status: 502, headers: JSON_HEADERS });
     }
   },
 };
+
+function notFound() {
+  return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: JSON_HEADERS });
+}
 
 // ── OAuth setup flow ─────────────────────────────────────────────────────────
 
@@ -141,6 +151,20 @@ async function solarData(env, raw = false) {
     return new Response(JSON.stringify(cached), { headers: JSON_HEADERS });
   }
 
+  try {
+    return await fetchFreshSolarData(env, raw);
+  } catch (err) {
+    // Serve stale cache (up to its 1h KV lifetime) rather than dashes when
+    // Tesla has a hiccup.
+    if (!raw && cached) {
+      console.warn(`[solar-api] serving stale cache after upstream failure: ${err.message}`);
+      return new Response(JSON.stringify({ ...cached, stale: true }), { headers: JSON_HEADERS });
+    }
+    throw err;
+  }
+}
+
+async function fetchFreshSolarData(env, raw) {
   const siteId = await env.TESLA.get('site_id');
   if (!siteId) throw new Error('no site id — visit /api/tesla/login');
   const token = await getAccessToken(env);

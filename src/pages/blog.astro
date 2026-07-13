@@ -1,16 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import PostCard from '../components/PostCard.astro';
 import Footer from '../components/Footer.astro';
+import { getSortedPosts } from '../lib/posts';
 
-const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const posts = allPosts.sort(
-  (a, b) => new Date(b.data.dateSort).getTime() - new Date(a.data.dateSort).getTime()
-);
-
-const categories = ['all', 'solar', 'gaming', 'crypto', 'tech', 'personal'] as const;
+const posts = await getSortedPosts();
 ---
 
 <BaseLayout title="Blog" description="All posts from SolarCurve's House of Flamp.">
