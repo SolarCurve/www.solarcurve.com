@@ -1,8 +1,10 @@
 ---
+// shortLabel is used below the sm breakpoint, where the full labels
+// overflow a 375px viewport.
 const navLinks = [
   { href: '/blog', label: 'Blog' },
   { href: '/gaming', label: 'Gaming' },
-  { href: '/solar', label: 'Solar journey' },
+  { href: '/solar', label: 'Solar journey', shortLabel: 'Solar' },
   { href: '/about', label: 'About' },
 ];
 
@@ -18,17 +20,22 @@ const currentPath = Astro.url.pathname;
     <span class="text-sm text-muted hidden sm:inline">/ House of Flamp</span>
   </a>
 
-  <div class="flex items-center gap-6">
+  <div class="flex items-center gap-4 sm:gap-6">
     {navLinks.map(link => (
       <a
         href={link.href}
-        class={`text-sm transition-colors duration-100 ${
+        class={`text-sm whitespace-nowrap transition-colors duration-100 ${
           currentPath.startsWith(link.href)
             ? 'text-solar-300'
             : 'text-dim hover:text-bright'
         }`}
       >
-        {link.label}
+        {link.shortLabel ? (
+          <>
+            <span class="sm:hidden">{link.shortLabel}</span>
+            <span class="hidden sm:inline">{link.label}</span>
+          </>
+        ) : link.label}
       </a>
     ))}
   </div>
