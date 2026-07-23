@@ -44,6 +44,16 @@
 "w": 800,
 "webp": true
 },
+"/images/battlefail-launched-early.jpg": {
+"h": 520,
+"w": 508,
+"webp": true
+},
+"/images/battlefail-login.jpg": {
+"h": 757,
+"w": 993,
+"webp": true
+},
 "/images/cori.jpg": {
 "h": 1200,
 "w": 901,
@@ -52,6 +62,11 @@
 "/images/daddo-at-texas-state.jpg": {
 "h": 1200,
 "w": 901,
+"webp": true
+},
+"/images/degenerate-ape-1051.jpg": {
+"h": 750,
+"w": 750,
 "webp": true
 },
 "/images/kk-amazon-model.jpg": {
@@ -264,6 +279,16 @@
 "w": 800,
 "webp": true
 },
+"/images/rogue-shark-2500.jpg": {
+"h": 750,
+"w": 750,
+"webp": true
+},
+"/images/sentries-solar-curve.png": {
+"h": 1500,
+"w": 1500,
+"webp": true
+},
 "/images/solar-array-and-pool.jpg": {
 "h": 1500,
 "w": 2000,
@@ -272,6 +297,26 @@
 "/images/solar-tesla-inverters.jpg": {
 "h": 1200,
 "w": 1600,
+"webp": true
+},
+"/images/ssd-benchmarking-1.png": {
+"h": 279,
+"w": 785,
+"webp": true
+},
+"/images/ssd-benchmarking-2.png": {
+"h": 342,
+"w": 677,
+"webp": true
+},
+"/images/ssd-benchmarking-3.png": {
+"h": 615,
+"w": 482,
+"webp": false
+},
+"/images/ssd-benchmarking-5.png": {
+"h": 615,
+"w": 482,
 "webp": true
 },
 "/images/thanksgiving.jpg": {
