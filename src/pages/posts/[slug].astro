@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import { categoryLabels, categoryColors } from '../../lib/categories';
+import PostImage from '../../components/PostImage.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -53,7 +54,7 @@ const { Content } = await post.render();
       prose-blockquote:border-solar-600 prose-blockquote:text-dim
       prose-img:rounded-lg prose-img:border prose-img:border-border
       prose-hr:border-border">
-      <Content />
+      <Content components={{ img: PostImage }} />
     </div>
 
     <!-- Back link -->

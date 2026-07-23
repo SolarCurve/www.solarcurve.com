@@ -13,11 +13,16 @@ import Footer from '../components/Footer.astro';
   <main class="px-6 md:px-10 py-10 max-w-3xl mx-auto">
     <h1 class="text-2xl font-medium text-star mb-8">About</h1>
 
-    <img
-      src="/images/paul_commodore_adult.jpg"
-      alt="Paul Drew with a Commodore 64"
-      class="rounded-lg border border-border mb-8 w-full max-w-md"
-    />
+    <picture>
+      <source srcset="/images/paul_commodore_adult.webp" type="image/webp" />
+      <img
+        src="/images/paul_commodore_adult.jpg"
+        alt="Paul Drew with a Commodore 64"
+        width="800"
+        height="600"
+        class="rounded-lg border border-border mb-8 w-full max-w-md"
+      />
+    </picture>
 
     <div class="space-y-5 text-[15px] text-bright leading-relaxed">
       <p>

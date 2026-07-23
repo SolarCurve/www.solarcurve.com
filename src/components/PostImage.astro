@@ -1,0 +1,43 @@
+---
+// Renders markdown images in posts as <picture> with a WebP source, explicit
+// dimensions (stops layout shift), and lazy loading. Mapped onto the `img`
+// element in posts/[slug].astro, so .mdx files keep plain ![alt](/path) syntax.
+import manifest from '../lib/image-manifest.json';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  title?: string;
+}
+
+const { src = '', alt = '', title } = Astro.props;
+
+type Meta = { w: number; h: number; webp: boolean };
+const meta = (manifest as Record<string, Meta>)[src];
+const webpSrc = meta?.webp ? src.replace(/\.(jpe?g|png)$/i, '.webp') : null;
+---
+
+{webpSrc ? (
+  <picture>
+    <source srcset={webpSrc} type="image/webp" />
+    <img
+      src={src}
+      alt={alt}
+      title={title}
+      width={meta.w}
+      height={meta.h}
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+) : (
+  <img
+    src={src}
+    alt={alt}
+    title={title}
+    width={meta?.w}
+    height={meta?.h}
+    loading="lazy"
+    decoding="async"
+  />
+)}
