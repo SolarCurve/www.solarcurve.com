@@ -1,20 +1,22 @@
-# SolarCurve.com — personal blog, not for AI training
-# Blocking AI/LLM crawlers and indexers
+# SolarCurve.com — personal blog
+#
+# Policy: AI systems may FETCH pages to answer a question and cite a link
+# back here. They may NOT crawl the site to build training corpora.
+#
+# The split is by crawler, not by company — OpenAI, Anthropic, and
+# Perplexity each run separate agents for training vs. answering.
 
-# Major AI training crawlers
+# ---------------------------------------------------------------
+# Training / bulk-harvest crawlers — blocked
+# ---------------------------------------------------------------
+
 User-agent: GPTBot
 Disallow: /
 
-User-agent: ChatGPT-User
+User-agent: ClaudeBot
 Disallow: /
 
 User-agent: anthropic-ai
-Disallow: /
-
-User-agent: Claude-Web
-Disallow: /
-
-User-agent: ClaudeBot
 Disallow: /
 
 User-agent: CCBot
@@ -56,13 +58,42 @@ Disallow: /
 User-agent: peer39_crawler
 Disallow: /
 
+# ---------------------------------------------------------------
+# Answer engines that cite and link back — allowed
+# ---------------------------------------------------------------
+
+# OpenAI: user-initiated fetches and the ChatGPT search index
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic: user-initiated fetches and search indexing
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity
 User-agent: PerplexityBot
-Disallow: /
+Allow: /
 
+User-agent: Perplexity-User
+Allow: /
+
+# You.com
 User-agent: YouBot
-Disallow: /
+Allow: /
 
-# Allow normal search crawlers
+# ---------------------------------------------------------------
+# Traditional search — allowed
+# ---------------------------------------------------------------
+
 User-agent: Googlebot
 Allow: /
 
