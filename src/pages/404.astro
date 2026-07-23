@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PostCard from '../components/PostCard.astro';
+import { getSortedPosts } from '../lib/posts';
+
+const recent = (await getSortedPosts()).slice(0, 4);
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page doesn't exist — but here's the way back to the House of Flamp."
+>
+  <Nav />
+
+  <main class="px-6 md:px-10 py-16 max-w-3xl mx-auto">
+    <p class="font-mono text-sm text-solar-300 mb-3">404</p>
+    <h1 class="text-2xl md:text-3xl font-medium text-star mb-4">
+      This page went dark.
+    </h1>
+    <p class="text-[15px] text-dim leading-relaxed mb-8">
+      The link's broken or the page moved. Nothing's on fire — try one of these
+      instead.
+    </p>
+
+    <div class="flex flex-wrap gap-3 mb-12">
+      <a href="/" class="text-sm text-solar-300 hover:underline">Home</a>
+      <span class="text-muted">·</span>
+      <a href="/blog" class="text-sm text-solar-300 hover:underline">Blog</a>
+      <span class="text-muted">·</span>
+      <a href="/solar" class="text-sm text-solar-300 hover:underline">Solar journey</a>
+      <span class="text-muted">·</span>
+      <a href="/gaming" class="text-sm text-solar-300 hover:underline">Gaming</a>
+      <span class="text-muted">·</span>
+      <a href="/about" class="text-sm text-solar-300 hover:underline">About</a>
+    </div>
+
+    <h2 class="text-sm font-medium text-dim uppercase tracking-wide mb-4">
+      Recent posts
+    </h2>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {recent.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

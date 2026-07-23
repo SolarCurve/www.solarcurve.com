@@ -22,6 +22,56 @@ const fullTitle = title === "House of Flamp" ? `${siteName}'s ${title}` : `${tit
 const base = Astro.site ?? Astro.url.origin;
 const ogImageUrl = new URL(ogImage, base).href;
 const canonicalUrl = new URL(Astro.url.pathname, base).href;
+
+// Entity graph. The Person node's sameAs is what ties this site to the same
+// author entity that myclientisthedevil.com already points back here for.
+const personId = new URL('/#paul', base).href;
+const websiteId = new URL('/#website', base).href;
+
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "Person",
+    "@id": personId,
+    name: "Paul M. Drew",
+    url: new URL('/', base).href,
+    jobTitle: "Founder, author, and technology leader",
+    homeLocation: { "@type": "Place", name: "Flower Mound, Texas" },
+    sameAs: [
+      "https://www.linkedin.com/in/paulmdrew/",
+      "https://x.com/SolarCurve",
+      "https://www.myclientisthedevil.com/",
+      "https://www.amazon.com/stores/Paul-Michael-Drew/author/B0H9JCC6SJ",
+      "https://www.goodreads.com/user/show/3653242-paul-drew",
+    ],
+  },
+  {
+    "@type": "WebSite",
+    "@id": websiteId,
+    name: "SolarCurve's House of Flamp",
+    url: new URL('/', base).href,
+    description: "SolarCurve's personal blog. Esports founder, tech company builder, solar power enthusiast, lifelong gamer. Flower Mound, TX.",
+    inLanguage: "en-US",
+    publisher: { "@id": personId },
+  },
+];
+
+if (ogType === "article") {
+  graph.push({
+    "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#post`,
+    headline: title,
+    description,
+    url: canonicalUrl,
+    image: ogImageUrl,
+    ...(publishedTime ? { datePublished: publishedTime, dateModified: publishedTime } : {}),
+    author: { "@id": personId },
+    publisher: { "@id": personId },
+    isPartOf: { "@id": websiteId },
+    mainEntityOfPage: canonicalUrl,
+  });
+}
+
+const jsonLd = { "@context": "https://schema.org", "@graph": graph };
 ---
 
 <!doctype html>
@@ -46,7 +96,9 @@ const canonicalUrl = new URL(Astro.url.pathname, base).href;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="alternate" type="application/rss+xml" title="SolarCurve's House of Flamp" href="/rss.xml" />
     <title>{fullTitle}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>
   <body class="bg-void min-h-screen">
     <slot />
