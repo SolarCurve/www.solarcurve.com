@@ -1,0 +1,66 @@
+name: Health check
+
+# Lightweight external monitor for solarcurve.com. Runs on a schedule and
+# fails the run (which emails the repo owner) if the site is down or the live
+# solar API has gone stale. This is a safety net, not a replacement for a
+# dedicated uptime service — GitHub throttles cron under load and disables
+# scheduled workflows after 60 days with no repo activity.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes (GitHub's floor is 5)
+  workflow_dispatch: {}       # allow manual runs from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Homepage returns 200
+        run: |
+          echo "Checking https://www.solarcurve.com/ ..."
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            --retry 3 --retry-delay 10 --retry-all-errors --max-time 30 \
+            https://www.solarcurve.com/)
+          echo "HTTP $code"
+          test "$code" = "200"
+
+      - name: Solar API is up and fresh
+        run: |
+          echo "Checking https://www.solarcurve.com/api/solar ..."
+          body=$(curl -sS --retry 3 --retry-delay 10 --retry-all-errors \
+            --max-time 30 https://www.solarcurve.com/api/solar)
+          echo "$body"
+
+          # Must be valid JSON with the expected field.
+          fetched_at=$(printf '%s' "$body" | jq -e '.fetched_at') || {
+            echo "::error::/api/solar did not return valid JSON with .fetched_at"
+            exit 1
+          }
+
+          now=$(( $(date +%s) * 1000 ))
+          age_ms=$(( now - fetched_at ))
+          age_min=$(( age_ms / 60000 ))
+          echo "Data is ${age_min} min old."
+
+          # Healthy age is < 2 min (120s cache). 30 min means the Tesla token
+          # refresh has almost certainly stalled while still serving 200s.
+          if [ "$age_ms" -gt 1800000 ]; then
+            echo "::error::Solar data is stale (${age_min} min) — Tesla token refresh likely broken"
+            exit 1
+          fi
+
+      - name: TLS certificate not expiring soon
+        run: |
+          echo "Checking certificate expiry ..."
+          end=$(echo | openssl s_client -servername www.solarcurve.com \
+            -connect www.solarcurve.com:443 2>/dev/null \
+            | openssl x509 -noout -enddate | cut -d= -f2)
+          echo "Expires: $end"
+          end_ts=$(date -d "$end" +%s)
+          days=$(( (end_ts - $(date +%s)) / 86400 ))
+          echo "$days days remaining."
+          # Cloudflare auto-renews well before this; < 7 days means renewal broke.
+          test "$days" -ge 7
