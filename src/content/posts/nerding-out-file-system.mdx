@@ -7,7 +7,7 @@ category: tech
 tags: [linux, xfs, sysadmin, filesystem, devops]
 ---
 
-I've been chasing down an issue where my backup software ([Vembu Storegrid](http://www.vembu.com/)) would hang and become unresponsive. Their support team logged in and helped me figure out that part of the disk becomes unresponsive in high I/O situations like when doing backups. They suggested running a repair.
+I've been chasing down an issue where my backup software ([Vembu Storegrid](https://www.vembu.com/)) would hang and become unresponsive. Their support team logged in and helped me figure out that part of the disk becomes unresponsive in high I/O situations like when doing backups. They suggested running a repair.
 
 The tricky part is that unmounting the drive and running `xfs_repair` wasn't as straightforward as it should be. Here's what actually worked.
 
