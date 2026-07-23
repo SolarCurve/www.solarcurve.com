@@ -10,6 +10,8 @@ const posts = defineCollection({
     category: z.enum(['solar', 'gaming', 'crypto', 'tech', 'personal']),
     tags: z.array(z.string()).optional(),
     draft: z.boolean().optional().default(false),
+    // Per-post social share image; falls back to /og-default.jpg when unset.
+    ogImage: z.string().optional(),
   }),
 });
 

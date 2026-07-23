@@ -5,17 +5,23 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  ogType?: string;
+  publishedTime?: string;
 }
 
 const {
   title = "House of Flamp",
   description = "SolarCurve's personal blog. Esports founder, tech company builder, solar power enthusiast, lifelong gamer. Flower Mound, TX.",
   ogImage = "/og-default.jpg",
+  ogType = "website",
+  publishedTime,
 } = Astro.props;
 
 const siteName = "SolarCurve";
 const fullTitle = title === "House of Flamp" ? `${siteName}'s ${title}` : `${title} — ${siteName}`;
-const ogImageUrl = new URL(ogImage, Astro.site ?? Astro.url.origin).href;
+const base = Astro.site ?? Astro.url.origin;
+const ogImageUrl = new URL(ogImage, base).href;
+const canonicalUrl = new URL(Astro.url.pathname, base).href;
 ---
 
 <!doctype html>
@@ -24,11 +30,14 @@ const ogImageUrl = new URL(ogImage, Astro.site ?? Astro.url.origin).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:image" content={ogImageUrl} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />

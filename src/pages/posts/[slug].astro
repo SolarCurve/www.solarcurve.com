@@ -17,7 +17,13 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  ogImage={post.data.ogImage}
+  ogType="article"
+  publishedTime={post.data.dateSort}
+>
   <Nav />
 
   <article class="px-6 md:px-10 py-10 max-w-3xl mx-auto">
